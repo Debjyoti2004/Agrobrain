@@ -4,9 +4,53 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Leaf, ArrowLeft, ChevronDown, Loader } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const states = ["Odisha", "Andhra Pradesh", "Assam", "Bihar", "West Bengal"]; 
-const dist = ["NICOBARS", "ANANTAPUR", "BAKSA", "ARARIA", "BANKURA"]; 
-const seasons = ["Kharif", "Whole Year", "Autumn", "Rabi", "Summer", "Winter"];
+// Régions de Madagascar (23 régions)
+const states = [
+  "Analamanga",
+  "Vakinankaratra",
+  "Itasy",
+  "Bongolava",
+  "Analanjirofo",
+  "Alaotra-Mangoro",
+  "Atsinanana",
+  "Vatovavy",
+  "Fitovinany",
+  "Atsimo-Atsinanana",
+  "Anosy",
+  "Androy",
+  "Atsimo-Andrefana",
+  "Menabe",
+  "Melaky",
+  "Boeny",
+  "Sofia",
+  "Betsiboka",
+  "Diana",
+  "Sava",
+  "Amoron’i Mania",
+  "Haute Matsiatra",
+  "Ihorombe"
+];
+
+// Exemple de districts (il y en a 119, j’en mets quelques-uns)
+const dist = [
+  "Antananarivo I",
+  "Antsirabe I",
+  "Ambatondrazaka",
+  "Fianarantsoa I",
+  "Toamasina I",
+  "Mahajanga I",
+  "Antsiranana I",
+  "Toliara I"
+];
+
+// Saisons agricoles/climatiques de Madagascar
+const seasons = [
+  "Saison des pluies",     // Novembre à avril
+  "Saison sèche",          // Mai à octobre
+  "Culture de contre-saison", // Riziculture irriguée, maraîchage
+  "Toute l'année"          // Cultures permanentes (bananes, café, etc.)
+];
+
 
 const InputField = ({ label, name, value, onChange }) => (
   <div>
@@ -84,7 +128,7 @@ const CropRecommendation = () => {
       setRecommendations(mockRecommendations);
 
     } catch (error) {
-      console.error("Error fetching recommendations:", error);
+      console.error("Erreur lors de la récupération des recommandations :", error);
     } finally {
       setLoading(false);
     }
@@ -100,10 +144,10 @@ const CropRecommendation = () => {
             const response = await axios.get("https://api.unsplash.com/search/photos", {
                 params: { query: `${crop} plant field`, client_id: 'mFG31wnhGo0nAcunuKOPzQ1DFlO_vplI6jgB5XDUseE', per_page: 1 }
             });
-            fetchedImages[crop] = data.results.length > 0 ? data.results[0].urls.regular : '/fallback-agriculture-image.jpg';
+            fetchedImages[crop] = data.results.length > 0 ? data.results[0].urls.regular : '/Objectives-of-Adult-Education-in-Agriculture.jpg';
           } catch (error) {
-            console.error(`Error fetching image for ${crop}:`, error);
-            fetchedImages[crop] = '/fallback-agriculture-image.jpg';
+            console.error(`Erreur lors de la récupération de l'image pour ${crop}:`, error);
+            fetchedImages[crop] = '/Objectives-of-Adult-Education-in-Agriculture.jpg';
           }
         }
         setImages(fetchedImages);
@@ -120,14 +164,14 @@ const CropRecommendation = () => {
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center space-x-2">
               <Leaf className="w-8 h-8 text-green-600" />
-              <span className="text-2xl font-bold text-gray-800">Crop Recommendation</span>
+              <span className="text-2xl font-bold text-gray-800">Recommandation de culture</span>
             </div>
             <button
               onClick={() => navigate(-1)}
               className="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-full shadow-lg transition-all duration-300 hover:bg-green-700 hover:shadow-xl hover:scale-105"
             >
               <ArrowLeft className="mr-2 w-4 h-4" />
-              Go Back
+              Retour
             </button>
           </div>
         </div>
@@ -141,11 +185,11 @@ const CropRecommendation = () => {
           transition={{ duration: 0.5 }}
         >
           <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-lg lg:col-span-1">
-            <h2 className="mb-6 text-xl font-bold text-gray-800">Location Details</h2>
+            <h2 className="mb-6 text-xl font-bold text-gray-800">Détails de l'emplacement</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <SelectField label="State" name="state" value={formData.state} onChange={handleChange} options={states} />
+              <SelectField label="État" name="state" value={formData.state} onChange={handleChange} options={states} />
               <SelectField label="District" name="district" value={formData.district} onChange={handleChange} options={dist} disabled={!formData.state} />
-              <SelectField label="Season" name="season" value={formData.season} onChange={handleChange} options={seasons} />
+              <SelectField label="Saison" name="season" value={formData.season} onChange={handleChange} options={seasons} />
               
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <InputField label="N (kg/ha)" name="N" value={formData.N} onChange={handleChange} />
@@ -154,18 +198,18 @@ const CropRecommendation = () => {
                 <InputField label="pH" name="ph" value={formData.ph} onChange={handleChange} />
               </div>
               
-              <InputField label="Temperature (°C)" name="temperature" value={formData.temperature} onChange={handleChange} />
-              <InputField label="Humidity (%)" name="humidity" value={formData.humidity} onChange={handleChange} />
-              <InputField label="Rainfall (mm)" name="rainfall" value={formData.rainfall} onChange={handleChange} />
+              <InputField label="Température (°C)" name="temperature" value={formData.temperature} onChange={handleChange} />
+              <InputField label="Humidité (%)" name="humidity" value={formData.humidity} onChange={handleChange} />
+              <InputField label="Précipitations (mm)" name="rainfall" value={formData.rainfall} onChange={handleChange} />
               
               <button type="submit" disabled={loading} className="flex justify-center items-center px-6 py-3 mt-4 w-full font-semibold text-white bg-green-600 rounded-lg shadow-md transition-all duration-300 hover:bg-green-700 hover:shadow-lg disabled:bg-gray-400">
-                {loading ? <Loader className="animate-spin" /> : "Get Recommendation"}
+                {loading ? <Loader className="animate-spin" /> : "Obtenir une recommandation"}
               </button>
             </form>
           </div>
 
           <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-lg lg:col-span-2">
-            <h2 className="mb-6 text-xl font-bold text-gray-800">Recommended Crops</h2>
+            <h2 className="mb-6 text-xl font-bold text-gray-800">Cultures recommandées</h2>
             <AnimatePresence>
               {recommendations.length > 0 ? (
                 <motion.div className="space-y-4">
@@ -188,8 +232,8 @@ const CropRecommendation = () => {
               ) : (
                 <div className="flex flex-col justify-center items-center h-full text-center text-gray-500">
                   <Leaf size={48} className="mb-4 text-gray-300" />
-                  <h3 className="text-lg font-semibold">Your crop recommendations will appear here.</h3>
-                  <p>Fill out the form to get started.</p>
+                  <h3 className="text-lg font-semibold">Vos recommandations de cultures apparaîtront ici.</h3>
+                  <p>Remplissez le formulaire pour commencer.</p>
                 </div>
               )}
             </AnimatePresence>
